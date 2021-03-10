@@ -6,35 +6,35 @@ services:
     build: 
       context: node
     container_name: app
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh
     networks: 
       - node-network
     volumes:
       - ./node:/usr/src/app
     tty: true
-    ports: 
-      - "3000:3000"
-    depends_on: 
-      - proxy
+    depends_on:
+      - db
 
-  # db:
-  #   image: mysql:5.7
-  #   command: --innodb-use-native-aio=0
-  #   container_name: db
-  #   restart: always
-  #   tty: true
-  #   volumes:
-  #     - ./mysql:/var/lib/mysql
-  #   environment:
-  #     - MYSQL_DATABASE=nodedb
-  #     - MYSQL_ROOT_PASSWORD=root
-  #     - MYSQL_USER=root
-  #   networks:
-  #     - node-network
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+    networks:
+      - node-network
 
   proxy:
     build:
       context:  nginx
     container_name: proxy
+    entrypoint: dockerize -wait tcp://app:3000 -timeout 40s docker-entrypoint.sh
     networks:
     - node-network
     volumes:
@@ -42,8 +42,8 @@ services:
     tty: true
     ports: 
       - "8080:80"
-    # depends_on:
-    #   - db
+    depends_on:
+      - app
     
 networks:
   node-network:
