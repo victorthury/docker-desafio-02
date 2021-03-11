@@ -1,18 +1,21 @@
-# How to test it
+# Nginx with Node.js
 
-In folder node, run:
-> npm install
-> docker build -t victorthury/node .
+## What is it?
 
-In folder nginx, run:
-> docker build -t victorthury/nginx .
+This repo is the submission to the following task: build a node.js app that 
+access a  MYSQL Database and writes some names to the table People. Then the 
+app should return a HTML page with `<h1>Full Cycle Rocks!</h1>` followed by all
+names in table people. To access the app, you must use Nginx as a reverse-proxy
+to the application.
 
-Then, run the built docker images within a network, in the following  example I named it "teste":
-> docker run -d --network teste --name node victorthury/node
-> docker run -d --network teste --name nginx -p 8080:80  victorthury/nginx
+## Pre-requisites
 
-There is a `docker-compose.yaml` in the root of this repo, but I don't recommend using it now, it is a mess and not finished...
+You must have docker installed, to do so, access the following 
+[site](https://www.docker.com/).
 
-Then access http://localhost:8080/
+## Usage
 
-Expect to see the message `502 Bad Gateway`
+In the root of the project, run:
+> docker-compose up -d --build
+
+When the containers are up, access it via http://localhost:8080
